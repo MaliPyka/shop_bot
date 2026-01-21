@@ -1,4 +1,0 @@
-SQLAlchemy>=2.0
-asyncpg
-aiogram
-python-dotenv

@@ -24,6 +24,7 @@ async def create_db():
 
 async def main():
     try:
+        await asyncio.sleep(5)
         await bot.delete_webhook(drop_pending_updates=True)
         await create_db()
         print("УРА! Таблицы успешно созданы в базе данных.")

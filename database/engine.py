@@ -1,14 +1,8 @@
-import os
-
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-# Используем 127.0.0.1 вместо localhost — это надежнее для Windows
 
-DB_URL = os.getenv(
-    "DB_URL",
-    "postgresql+asyncpg://user:password@127.0.0.1:5432/shop_database"
-)
+DB_URL = "postgresql+asyncpg://postgres:2323@localhost:5432/appdb"
 
 
 engine = create_async_engine(

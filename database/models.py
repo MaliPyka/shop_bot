@@ -54,3 +54,14 @@ class OrderItem(Base):
     price: Mapped[float] = mapped_column(Float)
 
 
+class History(Base):
+    __tablename__ = "history"
+
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id"))
+    time: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
+
+
+
