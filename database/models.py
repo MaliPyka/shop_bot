@@ -1,5 +1,5 @@
 
-from sqlalchemy import func, Float
+from sqlalchemy import func, Float, Boolean
 from sqlalchemy import String, Integer, ForeignKey, BigInteger, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from .engine import Base
@@ -13,6 +13,7 @@ class User(Base):
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     username: Mapped[str] = mapped_column(String(100), nullable=True)
     first_name: Mapped[str] = mapped_column(String(100), nullable=True)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 

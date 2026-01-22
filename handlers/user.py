@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import Message
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 
 from database.requests import set_user
 from keyboards.Inline_Keyboards import get_start_keyboard
@@ -13,7 +13,14 @@ async def start_cmd(message: Message):
                    message.from_user.username,
                    message.from_user.first_name)
 
-    await message.answer(f"Привет, {message.from_user.mention_html()}!", reply_markup=get_start_keyboard(), parse_mode="html")
+    await message.answer("""Добро пожаловать в Kotbass Shop! 👋
+
+Мы подготовили для тебя лучшие предложения по электронике в Тбилиси. 🇬🇪
+
+🛒 Внутри каталога: • Новинки смартфонов и гаджетов • Аксессуары на любой вкус • Быстрая доставка прямо в руки
+
+————————————————— 👇 Жми «Каталог», чтобы начать покупки:""",reply_markup=get_start_keyboard())
+
 
 
 

@@ -3,20 +3,27 @@ import os
 import logging
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
+from middleware.AdminCheck import AdminCheck
 
 from database.engine import engine, Base
-import database.models
 
 from database.engine import DB_URL
 print("DB_URL =", DB_URL)
 
 from handlers.user import router
+from handlers.admin_panel import admin_router
 
 load_dotenv()
 
 bot = Bot(token=os.getenv("BOT_TOKEN"))
 dp = Dispatcher()
+
+dp.message.middleware(AdminCheck())
+
+dp.include_router(admin_router)
 dp.include_router(router)
+
+
 
 async def create_db():
     async with engine.begin() as conn:
@@ -24,7 +31,6 @@ async def create_db():
 
 async def main():
     try:
-        await asyncio.sleep(5)
         await bot.delete_webhook(drop_pending_updates=True)
         await create_db()
         print("УРА! Таблицы успешно созданы в базе данных.")

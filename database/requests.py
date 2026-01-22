@@ -3,7 +3,7 @@ from database.engine import async_session
 from database.models import Product
 from database.models import Category
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 
 async def set_user(tg_id, username, first_name):
@@ -30,3 +30,11 @@ async def get_product_by_category(category_id):
     async with async_session() as session:
         result = await session.scalars(select(Product).where(Category.id == category_id))
         return result.all()
+
+
+async def get_admins():
+    async with async_session() as session:
+        result = await session.scalars(select(User.tg_id).where(User.is_admin == True))
+        return set(result.all())
+
+
