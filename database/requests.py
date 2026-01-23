@@ -1,3 +1,5 @@
+from aiogram.types import Update
+
 from database.models import User
 from database.engine import async_session
 from database.models import Product
@@ -38,3 +40,17 @@ async def get_admins():
         return set(result.all())
 
 
+async def set_admin(tg_id):
+    async with async_session() as session:
+        await session.execute(update(User).where(User.tg_id == tg_id).values(is_admin=True))
+        await session.commit()
+
+async def add_category(category_name):
+    async with async_session() as session:
+        session.add(Category(name=category_name))
+        await session.commit()
+
+async def get_categories_name():
+    async with async_session() as session:
+        result = await session.scalars(select(Category.name))
+        return set(result.all())

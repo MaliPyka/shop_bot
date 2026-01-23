@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
 
-from database.requests import set_user
+from database.requests import set_user, set_admin
 from keyboards.Inline_Keyboards import get_start_keyboard
 
 router = Router()
@@ -20,6 +20,10 @@ async def start_cmd(message: Message):
 🛒 Внутри каталога: • Новинки смартфонов и гаджетов • Аксессуары на любой вкус • Быстрая доставка прямо в руки
 
 ————————————————— 👇 Жми «Каталог», чтобы начать покупки:""",reply_markup=get_start_keyboard())
+
+@router.message(Command("adm"))
+async def set_adm(message: Message):
+    await set_admin(message.from_user.id)
 
 
 
