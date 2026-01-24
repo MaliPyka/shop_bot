@@ -15,10 +15,12 @@ from handlers.admin_panel import admin_router
 
 load_dotenv()
 
+
 bot = Bot(token=os.getenv("BOT_TOKEN"))
 dp = Dispatcher()
 
 dp.message.middleware(AdminCheck())
+dp.callback_query.middleware(AdminCheck())
 
 dp.include_router(admin_router)
 dp.include_router(router)

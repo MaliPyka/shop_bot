@@ -54,3 +54,9 @@ async def get_categories_name():
     async with async_session() as session:
         result = await session.scalars(select(Category.name))
         return set(result.all())
+
+async def get_categories():
+    async with async_session() as session:
+        result = await session.scalars(select(Category))
+        return result.all()
+

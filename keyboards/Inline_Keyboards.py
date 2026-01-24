@@ -40,3 +40,9 @@ def admin_main_keyboard():
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
+
+def button_back() -> InlineKeyboardMarkup:
+    button = [[InlineKeyboardButton(text="🔙 Назад", callback_data="back")]]
+
+    return InlineKeyboardMarkup(inline_keyboard=button)
+

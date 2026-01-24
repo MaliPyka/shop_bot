@@ -2,11 +2,11 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 
-from keyboards.Inline_Keyboards import admin_main_keyboard
+from keyboards.Inline_Keyboards import admin_main_keyboard, button_back
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
-from database.requests import add_category, get_categories_name
+from database.requests import add_category, get_categories_name, get_categories
 
 admin_router = Router()
 
@@ -18,19 +18,37 @@ class Add(StatesGroup):
     waiting_price = State()
 
 @admin_router.message(Command("admin"))
-async def admin_cmd(message: Message, is_admin: bool):
+@admin_router.callback_query(F.data == "back")
+async def admin_cmd(event: Message | CallbackQuery, is_admin: bool):
     if not is_admin:
-        await message.answer("Вы не являетесь админом!")
+        target = event if isinstance(event, Message) else event.message
+        await target.answer("Вы не являетесь админом!")
         return
 
-    await message.answer("""⚙️ ПАНЕЛЬ УПРАВЛЕНИЯ KOTBASS ————————————————— 🛠 Статус системы: Online 👤 Доступ: Администратор
+    text = (
+        "⚙️ ПАНЕЛЬ УПРАВЛЕНИЯ KOTBASS\n"
+        "—————————————————\n"
+        "🛠 Статус системы: Online\n"
+        "👤 Доступ: Администратор\n\n"
+        "Используйте меню ниже для настройки склада...\n"
+        "—————————————————\n"
+        "👇 Выберите раздел:"
+    )
+    kb = admin_main_keyboard()
 
-Используйте меню ниже для настройки склада, управления категориями и запуска рассылок. ————————————————— 👇 Выберите раздел:""", reply_markup=admin_main_keyboard())
+    if isinstance(event, Message):
+        await event.answer(text, reply_markup=kb)
+    elif isinstance(event, CallbackQuery):
+        await event.message.edit_text(text, reply_markup=kb)
+        await event.answer()
 
 
 @admin_router.callback_query(F.data == "add_product")
 async def callback(callback: CallbackQuery):
-    pass
+    await callback.answer()
+    categories = await get_categories()
+    list_categories = "\n".join([f"{c.id}. {c.name}" for c in categories])
+    await callback.message.edit_text(f"Введите категорию(номер):\n{list_categories} ")
 
 @admin_router.callback_query(F.data == "add_category")
 async def callback(callback: CallbackQuery, state: FSMContext):
@@ -50,7 +68,7 @@ async def waiting_name(message: Message, state: FSMContext):
         return
     await add_category(name)
     await state.clear()
-    await message.answer(f"Категория {name} успешно добавлена!")
+    await message.answer(f"Категория {name} успешно добавлена!", reply_markup=button_back())
 
 @admin_router.callback_query(F.data("delete_product_list"))
 async def callback(query: CallbackQuery):
