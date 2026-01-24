@@ -16,6 +16,7 @@ class Add(StatesGroup):
     waiting_description = State()
     waiting_quantity = State()
     waiting_price = State()
+    waiting_name_item = State()
 
 @admin_router.message(Command("admin"))
 @admin_router.callback_query(F.data == "back")
@@ -44,11 +45,25 @@ async def admin_cmd(event: Message | CallbackQuery, is_admin: bool):
 
 
 @admin_router.callback_query(F.data == "add_product")
-async def callback(callback: CallbackQuery):
+async def callback(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     categories = await get_categories()
     list_categories = "\n".join([f"{c.id}. {c.name}" for c in categories])
-    await callback.message.edit_text(f"Введите категорию(номер):\n{list_categories} ")
+    await callback.message.edit_text(f"Выберите категорию(номер) товара:\n{list_categories} ")
+    await state.set_state(Add.waiting_category)
+
+
+@admin_router.message(Add.waiting_category)
+async def choose_category(message: Message, state: FSMContext):
+    await state.update_data(category=message.text)
+    await message.edit_text("Введите название товара:")
+    await state.set_state(Add.waiting_name_item)
+
+
+@admin_router.message(Add.waiting_name_item)
+async def save_item_name(message: Message, state: FSMContext):
+    await state.update_data(name=message.text)
+
 
 @admin_router.callback_query(F.data == "add_category")
 async def callback(callback: CallbackQuery, state: FSMContext):
